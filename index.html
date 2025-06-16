@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь сделок | AmoCRM</title>
+    <script src="https://cdn.amocrm.ru/widgets/v1/amo_api.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 10px;
+            margin: 0;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        .calendar-header {
+            text-align: center;
+            font-weight: bold;
+            padding: 5px;
+        }
+        .calendar-day {
+            border: 1px solid #ddd;
+            padding: 5px;
+            min-height: 40px;
+            position: relative;
+            cursor: pointer;
+        }
+        .calendar-day:hover {
+            background: #f5f5f5;
+        }
+        .day-number {
+            font-size: 14px;
+            color: #000;
+        }
+        .deal-count {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .deals-list {
+            margin-top: 20px;
+        }
+        .deal-item {
+            padding: 10px;
+            border: 1px solid #eee;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .deal-item:hover {
+            background: #f9f9f9;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2>Календарь сделок</h2>
+        <div id="calendar"></div>
+        <div id="deals-list" class="deals-list" style="display: none;">
+            <h3>Сделки на <span id="selected-date"></span></h3>
+            <div id="deals-container"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
