@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auth Handler</title>
+    <script>
+        // Извлечение code из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        
+        if (code) {
+            // Отправка code на сервер или обработка в localStorage
+            localStorage.setItem('amo_auth_code', code);
+            window.close(); // Закрыть popup после обработки
+        }
+    </script>
+</head>
+<body>
+    <p>Авторизация завершена. Окно можно закрыть.</p>
+</body>
+</html>
