@@ -1,18 +1,25 @@
 {
-  "name": "Календарь сделок",
-  "description": "Виджет для отображения сделок по датам",
-  "version": "1.0",
+  "name": "Календарь заказов",
+  "description": "Виджет для отображения заказов по датам",
+  "version": "1.0.0",
   "manifest_version": 2,
   "icons": {
-    "128": "https://taemur283.github.io/amo-widget-calendar/icon.png"
+    "128": "icon.png"
   },
   "widget": {
-    "url": "https://taemur283.github.io/amo-widget-calendar/index.html",
+    "url": "index.html",
     "size": {
       "width": 800,
       "height": 600
     },
-    "locations": ["sidebar"]  
+    "locations": ["sidebar"]
   },
-  "permissions": ["leads", "contacts", "custom_fields"]
+  "permissions": [
+    "leads",
+    "contacts",
+    "custom_fields"
+  ],
+  "settings": {
+    "redirect_uri": "https://taemur283.github.io/amo-widget-calendar/index.html"
+  }
 }
