@@ -1,20 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Auth Handler</title>
-    <script>
-        // Извлечение code из URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        
-        if (code) {
-            // Отправка code на сервер или обработка в localStorage
-            localStorage.setItem('amo_auth_code', code);
-            window.close(); // Закрыть popup после обработки
-        }
-    </script>
+    <title>OAuth Callback</title>
 </head>
 <body>
     <p>Авторизация завершена. Окно можно закрыть.</p>
+    <script>
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const state = urlParams.get('state'); // Используем для валидации
+
+        if (!code || !state) {
+            alert('Ошибка авторизации: отсутствует код или состояние.');
+        } else {
+            const clientId = '';
+            const clientSecret = '';
+            const redirectUri = 'https://taemur283.github.io/amo-widget-calendar/auth.html';
+
+            fetch(`https://spacebakery1.amocrm.ru/oauth2/access_token`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    client_id: clientId,
+                    client_secret: clientSecret,
+                    grant_type: 'authorization_code',
+                    code: code,
+                    redirect_uri: redirectUri
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.access_token && data.refresh_token) {
+                    localStorage.setItem(`amo_access_token_${state}`, data.access_token); // Сохраняем Access Token
+                    //localStorage.setItem(`amo_refresh_token_${state}`, data.refresh_token); // Сохраняем Refresh Token (пока не используется)
+                    alert('Авторизация прошла успешно!');
+                    window.location.href = 'https://taemur283.github.io/amo-widget-calendar/index.html'; // Перенаправляем обратно в виджет
+                } else {
+                    console.error('Ошибка получения токенов:', data);
+                    alert('Ошибка при получении токенов. Пожалуйста, проверьте консоль.');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка запроса токенов:', error);
+                alert('Ошибка при запросе токенов. Пожалуйста, проверьте консоль.');
+            });
+        }
+    </script>
 </body>
 </html>
