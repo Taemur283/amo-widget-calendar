@@ -20,6 +20,6 @@
     "custom_fields"
   ],
   "settings": {
-    "redirect_uri": "https://taemur283.github.io/amo-widget-calendar/index.html"
+    "redirect_uri": "https://taemur283.github.io/amo-widget-calendar/auth.html"
   }
 }
