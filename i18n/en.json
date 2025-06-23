@@ -1,0 +1,17 @@
+{
+  "widget": {
+    "name": "Order Calendar",
+    "description": "Widget for displaying orders by dates with ability to navigate to deal cards",
+    "short_description": "Calendar view of orders",
+    "tour_description": "Use the calendar for quick access to orders"
+  },
+  "monthNames": [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ],
+  "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+  "noDeals": "No orders for this date",
+  "settings": {
+    "refresh_rate": "Refresh frequency"
+  }
+}
