@@ -1,17 +1,32 @@
 {
   "widget": {
-    "name": "Order Calendar",
-    "description": "Widget for displaying orders by dates with ability to navigate to deal cards",
-    "short_description": "Calendar view of orders",
-    "tour_description": "Use the calendar for quick access to orders"
+    "name": "Orders Calendar",
+    "description": "Displays order counts by dates with ability to open deal cards",
+    "short_description": "Orders calendar",
+    "title": "Orders Calendar"
   },
-  "monthNames": [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ],
+  "monthNames": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
   "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-  "noDeals": "No orders for this date",
+  "ui": {
+    "loading": "Loading data...",
+    "noDeals": "No orders for this date",
+    "dealsForDate": "Orders for",
+    "backToCalendar": "← Back to calendar",
+    "deliveryRange": "Delivery range",
+    "exactTime": "Exact time",
+    "address": "Address",
+    "budget": "Budget",
+    "dealId": "Deal ID"
+  },
+  "errors": {
+    "apiFailed": "Failed to load data from amoCRM",
+    "invalidDate": "Invalid date",
+    "noAccess": "No data access"
+  },
   "settings": {
-    "refresh_rate": "Refresh frequency"
+    "language": {
+      "ru": "Russian",
+      "en": "English"
+    }
   }
 }
