@@ -3,31 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.amocrm.ru; script-src 'unsafe-inline'">
     <title>Календарь заказов | Space Bakery</title>
-    <script src="https://cdn.amocrm.ru/widgets/v1/amo_api.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="app">
-        <h1>Календарь заказов</h1>
-        <div id="calendar-container">
-            <div class="calendar-header">
-                <button id="prev-month">‹</button>
-                <h2 id="current-month"></h2>
-                <button id="next-month">›</button>
+        <div class="widget-container">
+            <div class="widget-header">
+                <h1 class="widget-title" data-i18n="widget.title">Календарь заказов</h1>
             </div>
-            <div id="calendar"></div>
-        </div>
-        <div id="deals-list" class="hidden">
-            <h2>Заказы на <span id="selected-date"></span></h2>
-            <div id="deals-container"></div>
-            <button id="back-to-calendar">← Назад к календарю</button>
-        </div>
-        <div id="loading" class="loading">
-            <div class="spinner"></div>
-            <p>Загрузка данных...</p>
+            
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p data-i18n="loading">Загрузка данных...</p>
+            </div>
+            
+            <div id="calendar-container">
+                <div class="calendar-nav">
+                    <button id="prev-month">‹</button>
+                    <h2 id="current-month"></h2>
+                    <button id="next-month">›</button>
+                </div>
+                <div id="calendar" class="calendar"></div>
+            </div>
+            
+            <div id="deals-list" class="hidden">
+                <h2 data-i18n="dealsForDate">Заказы на <span id="selected-date"></span></h2>
+                <div id="deals-container"></div>
+                <button id="back-to-calendar" class="back-button" data-i18n="backToCalendar">← Назад к календарю</button>
+            </div>
         </div>
     </div>
+    
+    <script src="https://cdn.amocrm.ru/widgets/v1/amo_api.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
