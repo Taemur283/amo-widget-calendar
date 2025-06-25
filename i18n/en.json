@@ -3,14 +3,13 @@
     "name": "Orders Calendar",
     "description": "Displays order counts by dates with ability to open deal cards",
     "short_description": "Orders calendar",
+    "tour_description":"Displays order counts by dates with ability to open deal cards",
     "title": "Orders Calendar",
-    "settings": {
-      "api_key": "amoCRM API Key",
-      "account": "amoCRM Subdomain",
-      "language": "Interface language",
-      "language_ru": "Russian",
-      "language_en": "English"
-    }
+    "api_key": "amoCRM API Key",
+    "account": "amoCRM Subdomain",
+    "language": "Interface language",
+    "language_ru": "Russian",
+    "language_en": "English"
   },
   "monthNames": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
   "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
