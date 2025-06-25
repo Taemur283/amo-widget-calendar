@@ -35,28 +35,40 @@ define(['jquery'], function($) {
     };
 
     // Основные методы
-    this.callbacks = {
-      render: function() {
-        return true;
-      },
+   this.callbacks = {
+  init: function() {
+    if (!window.AmoCRM) {
+      console.error('AmoCRM API не загружен');
+      return false;
+    }
+    
+    try {
+      // Инициализация подписки на уведомления
+      window.AmoCRM.notifications.subscribe({
+        handler_type: 'user_short_lived',
+        callback: function(data) {
+          console.log('Получено уведомление:', data);
+          // Обновляем данные при изменениях
+          if (data.type === 'deal_updated') {
+            self.refreshDealsData();
+          }
+        },
+        error: function(err) {
+          console.error('Ошибка подписки на уведомления:', err);
+        }
+      });
 
-      init: function() {
-        if (!window.AmoCRM) {
-          console.error('AmoCRM API не загружен');
-          return false;
-        }
-        
-        try {
-          self.setLanguage(self.getLanguageSetting());
-          self.renderCalendar(currentDate);
-          self.refreshDealsData();
-          self.setupRefresh();
-          return true;
-        } catch (e) {
-          console.error('Ошибка инициализации:', e);
-          return false;
-        }
-      },
+      // Остальной код инициализации
+      self.setLanguage(self.getLanguageSetting());
+      self.renderCalendar(currentDate);
+      self.refreshDealsData();
+      self.setupRefresh();
+      return true;
+    } catch (e) {
+      console.error('Ошибка инициализации:', e);
+      return false;
+    }
+  },
 
       bind_actions: function() {
         $(document)
