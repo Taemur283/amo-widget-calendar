@@ -11,7 +11,14 @@
     "support": {
       "link": "https://spacebakery.ru/#about_us",
       "email": "info@spacebakery.ru"
-    }
+    },
+  "notifications": {
+    "handler_type": "user_short_lived"
+  },
+  "permissions": {
+    "notifications": ["user_short_lived"]
+  }
+    
   },
   "locations": ["lcard-1", "ccard-1", "settings"],
   "settings": {
