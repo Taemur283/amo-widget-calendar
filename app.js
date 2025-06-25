@@ -4,6 +4,35 @@ define(['jquery'], function($) {
     var currentDate = new Date();
     var dealsCache = {};
     var refreshInterval;
+    var translations = {
+      ru: {
+        monthNames: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
+        weekdays: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
+        noDeals: "Нет заказов на эту дату",
+        loading: "Загрузка..."
+      },
+      en: {
+        monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        noDeals: "No orders for this date",
+        loading: "Loading..."
+      }
+    };
+
+    function loadTranslations(lang) {
+      return fetch(`./locales/${lang}.json`)
+        .then(response => response.json())
+        .catch(() => (lang === 'ru' ? translations.ru : translations.en));
+    }
+
+    // Инициализация в методе init
+    this.init = function() {
+      return loadTranslations(this.getLanguageSetting())
+        .then(data => {
+          translations[this.currentLanguage] = data;
+          this.renderCalendar(currentDate);
+        });
+    };
 
     // Основные методы
     this.callbacks = {
@@ -12,16 +41,16 @@ define(['jquery'], function($) {
       },
 
       init: function() {
-        if (!AmoApi) {
-          console.error('AmoAPI не загружен');
+        if (!window.AmoCRM) {
+          console.error('AmoCRM API не загружен');
           return false;
         }
         
         try {
-          AmoApi.init().then(function() {
-            self.renderCalendar(currentDate);
-            self.setupRefresh();
-          });
+          self.setLanguage(self.getLanguageSetting());
+          self.renderCalendar(currentDate);
+          self.refreshDealsData();
+          self.setupRefresh();
           return true;
         } catch (e) {
           console.error('Ошибка инициализации:', e);
@@ -38,7 +67,7 @@ define(['jquery'], function($) {
           .on('click', '.deal-item', function(e) {
             e.stopPropagation();
             var dealId = $(this).data('deal-id');
-            AmoApi.openCard('lead', dealId);
+            window.AmoCRM.opensCard('lead', dealId);
           })
           .on('click', '#prev-month', function() {
             currentDate.setMonth(currentDate.getMonth() - 1);
@@ -57,16 +86,38 @@ define(['jquery'], function($) {
         return true;
       },
 
-      destroy: function() {
-        clearInterval(refreshInterval);
-        return true;
-      },
-
       onSave: function() {
+        self.setLanguage(self.getLanguageSetting());
         self.setupRefresh();
         return true;
       }
     };
+
+    // Получение языка из настроек
+    this.getLanguageSetting = function() {
+      var settings = this.get_settings();
+      return (settings && settings.language) ? settings.language : 'ru';
+    };
+
+    // Установка языка
+    this.setLanguage = function(lang) {
+      this.currentLanguage = lang in translations ? lang : 'ru';
+    };
+
+    // Получение перевода
+        this.i18n = function(path) {
+      const keys = path.split('.');
+      let result = translations[this.currentLanguage];
+      
+      keys.forEach(key => {
+        result = result ? result[key] : path; // Возвращаем путь, если перевод не найден
+      });
+      
+      return result || path;
+    };
+
+    // Вместо жёстко закодированного текста
+    `<h2>${this.i18n('ui.dealsForDate')} <span id="selected-date"></span></h2>`
 
     // Кастомные методы
     this.renderCalendar = function(date) {
