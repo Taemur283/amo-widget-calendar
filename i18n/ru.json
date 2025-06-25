@@ -1,39 +1,55 @@
 {
   "widget": {
-    "name": "Календарь заказов",
-    "description": "Отображает количество заказов по датам с возможностью перехода в карточки сделок",
-    "short_description": "Календарь с заказами",
-    "title": "Календарь заказов",
-    "settings": {
-      "api_key": "API-ключ amoCRM",
-      "account": "Поддомен amoCRM",
-      "language": "Язык интерфейса",
-      "language_ru": "Русский",
-      "language_en": "Английский"
+    "name": "widget.name",
+    "description": "widget.description",
+    "short_description": "widget.short_description",
+    "version": "1.0.0",
+    "interface_version": 2,
+    "init_once": true,
+    "locale": ["ru", "en"],
+    "installation": true,
+    "support": {
+      "link": "https://spacebakery.ru/#about_us",
+      "email": "info@spacebakery.ru"
     }
   },
-  "monthNames": ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
-  "weekdays": ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
-  "ui": {
-    "loading": "Загрузка данных...",
-    "noDeals": "Нет заказов на эту дату",
-    "dealsForDate": "Заказы на",
-    "backToCalendar": "← Назад к календарю",
-    "deliveryRange": "Диапазон доставки",
-    "exactTime": "К точному времени",
-    "address": "Адрес",
-    "budget": "Бюджет",
-    "dealId": "ID сделки"
-  },
-  "errors": {
-    "apiFailed": "Ошибка загрузки данных из amoCRM",
-    "invalidDate": "Некорректная дата",
-    "noAccess": "Нет доступа к данным"
+  "locations": ["lcard-1", "ccard-1", "settings"],
+  "tour": {
+    "is_tour": true,
+    "tour_images": {
+      "ru": [
+        "/images/logo_main.png",
+        "/images/logo_main.png",
+        "/images/logo_main.png"
+      ]
+    },
+    "tour_description": "widget.tour_description"
   },
   "settings": {
+    "api_key": {
+      "name": "widget.api_key",
+      "type": "text",
+      "required": true
+    },
+    "account": {
+      "name": "widget.account",
+      "type": "text",
+      "required": true
+    },
     "language": {
-      "ru": "Русский",
-      "en": "Английский"
+      "name": "widget.language",
+      "type": "selectable",
+      "items": [
+        {
+          "value": "ru",
+          "name": "widget.language_ru"
+        },
+        {
+          "value": "en",
+          "name": "widget.language_en"
+        }
+      ],
+      "default": "ru"
     }
   }
 }
