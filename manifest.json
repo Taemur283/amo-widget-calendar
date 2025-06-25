@@ -14,28 +14,39 @@
     }
   },
   "locations": ["lcard-1", "ccard-1", "settings"],
+  "tour": {
+    "is_tour": true,
+    "tour_images": {
+      "ru": [
+        "/images/logo_main.png",
+        "/images/logo_main.png",
+        "/images/logo_main.png"
+      ]
+    },
+    "tour_description": "widget.tour_description"
+  },
   "settings": {
     "api_key": {
-      "name": "widget.settings.api_key",
+      "name": "widget.api_key",
       "type": "text",
       "required": true
     },
     "account": {
-      "name": "widget.settings.account",
+      "name": "widget.account",
       "type": "text",
       "required": true
     },
     "language": {
-      "name": "widget.settings.language",
+      "name": "widget.language",
       "type": "selectable",
       "items": [
         {
           "value": "ru",
-          "name": "widget.settings.language_ru"
+          "name": "widget.language_ru"
         },
         {
           "value": "en",
-          "name": "widget.settings.language_en"
+          "name": "widget.language_en"
         }
       ],
       "default": "ru"
