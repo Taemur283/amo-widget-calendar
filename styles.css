@@ -166,3 +166,53 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Добавлены стили для локализации и улучшения UI */
+[data-i18n] {
+  transition: opacity 0.3s;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.spinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 3px solid #3498db;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Улучшенные стили для календаря */
+.calendar-day.has-deals {
+  background-color: #f8f9fa;
+}
+
+.deal-count {
+  background-color: #e53935 !important;
+  font-weight: bold;
+}
+
+/* Адаптивные улучшения */
+@media (max-width: 480px) {
+  .calendar-nav {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .calendar {
+    grid-template-columns: repeat(7, minmax(30px, 1fr));
+  }
+}
