@@ -11,61 +11,31 @@
     "support": {
       "link": "https://spacebakery.ru/#about_us",
       "email": "info@spacebakery.ru"
-    },
-  "notifications": {
-    "handler_type": "user_short_lived"
-  },
-  "permissions": {
-    "notifications": ["user_short_lived"]
-  }
-    
+    }
   },
   "locations": ["lcard-1", "ccard-1", "settings"],
   "settings": {
     "api_key": {
-      "name": {
-        "ru": "API-ключ amoCRM",
-        "en": "amoCRM API Key"
-      },
-      "type": "string",
-      "required": true,
-      "placeholder": {
-        "ru": "Введите API-ключ",
-        "en": "Enter API key"
-      }
+      "name": "widget.settings.api_key",
+      "type": "text",
+      "required": true
     },
     "account": {
-      "name": {
-        "ru": "Поддомен amoCRM",
-        "en": "amoCRM subdomain"
-      },
-      "type": "string",
-      "required": true,
-      "placeholder": {
-        "ru": "ваш-поддомен",
-        "en": "your-subdomain"
-      }
+      "name": "widget.settings.account",
+      "type": "text",
+      "required": true
     },
     "language": {
-      "name": {
-        "ru": "Язык интерфейса",
-        "en": "Interface language"
-      },
+      "name": "widget.settings.language",
       "type": "selectable",
       "items": [
         {
           "value": "ru",
-          "name": {
-            "ru": "Русский",
-            "en": "Russian"
-          }
+          "name": "widget.settings.language_ru"
         },
         {
           "value": "en",
-          "name": {
-            "ru": "Английский",
-            "en": "English"
-          }
+          "name": "widget.settings.language_en"
         }
       ],
       "default": "ru"
