@@ -1,25 +1,67 @@
 {
-  "name": "Календарь заказов",
-  "description": "Виджет для отображения заказов по датам",
-  "version": "1.0.0",
-  "manifest_version": 2,
-  "icons": {
-    "128": "https://taemur283.github.io/amo-widget-calendar/icon.png"
-  },
   "widget": {
-    "url": "https://taemur283.github.io/amo-widget-calendar/index.html",
-    "size": {
-      "width": 800,
-      "height": 600
-    },
-    "locations": ["sidebar"]
+    "name": "widget.name",
+    "description": "widget.description",
+    "short_description": "widget.short_description",
+    "version": "1.0.0",
+    "interface_version": 2,
+    "init_once": true,
+    "locale": ["ru", "en"],
+    "installation": true,
+    "support": {
+      "link": "https://spacebakery.ru/#about_us",
+      "email": "info@spacebakery.ru"
+    }
   },
-  "permissions": [
-    "leads",
-    "contacts",
-    "custom_fields"
-  ],
+  "locations": ["lcard-1", "ccard-1", "settings"],
   "settings": {
-    "redirect_uri": "https://taemur283.github.io/amo-widget-calendar/auth.html"
+    "api_key": {
+      "name": {
+        "ru": "API-ключ amoCRM",
+        "en": "amoCRM API Key"
+      },
+      "type": "string",
+      "required": true,
+      "placeholder": {
+        "ru": "Введите API-ключ",
+        "en": "Enter API key"
+      }
+    },
+    "account": {
+      "name": {
+        "ru": "Поддомен amoCRM",
+        "en": "amoCRM subdomain"
+      },
+      "type": "string",
+      "required": true,
+      "placeholder": {
+        "ru": "ваш-поддомен",
+        "en": "your-subdomain"
+      }
+    },
+    "language": {
+      "name": {
+        "ru": "Язык интерфейса",
+        "en": "Interface language"
+      },
+      "type": "selectable",
+      "items": [
+        {
+          "value": "ru",
+          "name": {
+            "ru": "Русский",
+            "en": "Russian"
+          }
+        },
+        {
+          "value": "en",
+          "name": {
+            "ru": "Английский",
+            "en": "English"
+          }
+        }
+      ],
+      "default": "ru"
+    }
   }
 }
