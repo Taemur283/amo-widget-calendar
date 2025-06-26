@@ -7,9 +7,7 @@
     "title": "Orders Calendar",
     "api_key": "amoCRM API Key",
     "account": "amoCRM Subdomain",
-    "language": "Interface language",
-    "language_ru": "Russian",
-    "language_en": "English"
+    "language": "Interface language : English"
   },
   "monthNames": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
   "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
