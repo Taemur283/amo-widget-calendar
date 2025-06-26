@@ -1,47 +1,53 @@
-{
-  "widget": {
-    "name": "widget.name",
-    "description": "widget.description",
-    "short_description": "widget.short_description",
-    "code": "",
-    "secret_key": "",
-    "version": "1.0.1",
-    "interface_version": 2,
-    "init_once": true,
-    "locale": ["ru", "en"],
-    "installation": true,
-    "support": {
-      "link": "https://spacebakery.ru/#about_us",
-      "email": "info@spacebakery.ru"
-    }
-  },
-  "locations": ["lcard-1", "ccard-1", "settings"],
-  "tour": {
-    "is_tour": true,
-    "tour_images": {
-      "ru": [
-        "/images/logo_main.png",
-        "/images/logo_main.png",
-        "/images/logo_main.png"
-      ]
-    },
-    "tour_description": "widget.tour_description"
-  },
-  "settings": {
-    "api_key": {
-      "name": "widget.api_key",
-      "type": "text",
-      "required": true
-    },
-    "account": {
-      "name": "widget.account",
-      "type": "text",
-      "required": true
-    },
-    "language": {
-      "name": "widget.language",
-      "type": "text",
-      "required": true
-    }
-  }
-}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OAuth Callback</title>
+</head>
+<body>
+    <p>Авторизация завершена. Окно можно закрыть.</p>
+    <script>
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const state = urlParams.get('state'); // Используем для валидации
+
+        if (!code || !state) {
+            alert('Ошибка авторизации: отсутствует код или состояние.');
+        } else {
+            const clientId = '33f8689d-c1f5-4ddf-aa29-926901629176';
+            const clientSecret = '6X0hA3B8OiJdQRsEX8PUgrn8JipmKr4YZT9cW8SdTMSaBJqw0RYGWPJgSJ4QC3ld';
+            const redirectUri = 'https://taemur283.github.io/amo-widget-calendar/auth.html';
+
+            fetch(`https://spacebakery1.amocrm.ru/oauth2/access_token`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    client_id: clientId,
+                    client_secret: clientSecret,
+                    grant_type: 'authorization_code',
+                    code: code,
+                    redirect_uri: redirectUri
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.access_token && data.refresh_token) {
+                    localStorage.setItem(`amo_access_token_${state}`, data.access_token); // Сохраняем Access Token
+                    //localStorage.setItem(`amo_refresh_token_${state}`, data.refresh_token); // Сохраняем Refresh Token (пока не используется)
+                    alert('Авторизация прошла успешно!');
+                    window.location.href = 'https://taemur283.github.io/amo-widget-calendar/index.html'; // Перенаправляем обратно в виджет
+                } else {
+                    console.error('Ошибка получения токенов:', data);
+                    alert('Ошибка при получении токенов. Пожалуйста, проверьте консоль.');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка запроса токенов:', error);
+                alert('Ошибка при запросе токенов. Пожалуйста, проверьте консоль.');
+            });
+        }
+    </script>
+</body>
+</html>
