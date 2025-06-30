@@ -2,52 +2,148 @@
 <html>
 <head>
     <title>OAuth Callback</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <p>Авторизация завершена. Окно можно закрыть.</p>
+    <div id="status-container">
+        <div id="spinner" class="spinner"></div>
+        <p id="status-message">Обработка авторизации...</p>
+    </div>
+
     <script>
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        const state = urlParams.get('state'); // Используем для валидации
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusContainer = document.getElementById('status-container');
+            const statusMessage = document.getElementById('status-message');
+            const spinner = document.getElementById('spinner');
 
-        if (!code || !state) {
-            alert('Ошибка авторизации: отсутствует код или состояние.');
-        } else {
-            const clientId = 'f178be80-a7bf-40e5-8e70-196a5d4a775c';
-            const clientSecret = 'aFJFKE1yy0PMkxzUPTaCxiDpaktjLO594OqeNk6BnpCnHHkH7PiSPos1lnHxwpjR';
-            const redirectUri = 'https://taemur283.github.io/amo-widget-calendar/auth.html';
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const state = urlParams.get('state');
 
-            fetch(`https://spacebakery1.amocrm.ru/oauth2/access_token`, {
+            // Проверка обязательных параметров
+            if (!code || !state) {
+                showError('Ошибка авторизации: отсутствует код или параметр state.');
+                return;
+            }
+
+            // Конфигурация OAuth (лучше вынести в отдельный конфиг)
+            const oauthConfig = {
+                clientId: 'f178be80-a7bf-40e5-8e70-196a5d4a775c',
+                clientSecret: 'aFJFKE1yy0PMkxzUPTaCxiDpaktjLO594OqeNk6BnpCnHHkH7PiSPos1lnHxwpjR',
+                redirectUri: 'https://taemur283.github.io/amo-widget-calendar/auth.html',
+                tokenEndpoint: 'https://spacebakery1.amocrm.ru/oauth2/access_token',
+                widgetUrl: 'https://taemur283.github.io/amo-widget-calendar/index.html'
+            };
+
+            // Запрос токенов
+            fetch(oauthConfig.tokenEndpoint, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({
-                    client_id: clientId,
-                    client_secret: clientSecret,
+                    client_id: oauthConfig.clientId,
+                    client_secret: oauthConfig.clientSecret,
                     grant_type: 'authorization_code',
                     code: code,
-                    redirect_uri: redirectUri
+                    redirect_uri: oauthConfig.redirectUri
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.access_token && data.refresh_token) {
-                    localStorage.setItem(`amo_access_token_${state}`, data.access_token); // Сохраняем Access Token
-                    //localStorage.setItem(`amo_refresh_token_${state}`, data.refresh_token); // Сохраняем Refresh Token (пока не используется)
-                    alert('Авторизация прошла успешно!');
-                    window.location.href = 'https://taemur283.github.io/amo-widget-calendar/index.html'; // Перенаправляем обратно в виджет
-                } else {
-                    console.error('Ошибка получения токенов:', data);
-                    alert('Ошибка при получении токенов. Пожалуйста, проверьте консоль.');
+            .then(handleResponse)
+            .then(handleTokenData)
+            .catch(handleError);
+
+            function handleResponse(response) {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.error || `HTTP error! status: ${response.status}`);
+                    });
                 }
-            })
-            .catch(error => {
-                console.error('Ошибка запроса токенов:', error);
-                alert('Ошибка при запросе токенов. Пожалуйста, проверьте консоль.');
-            });
-        }
+                return response.json();
+            }
+
+            function handleTokenData(data) {
+                if (!data.access_token || !data.refresh_token) {
+                    throw new Error('Не удалось получить токены из ответа');
+                }
+
+                // Безопасное сохранение токенов
+                const storageKey = `amo_auth_${state}`;
+                localStorage.setItem(storageKey, JSON.stringify({
+                    access_token: data.access_token,
+                    refresh_token: data.refresh_token,
+                    expires_in: data.expires_in,
+                    token_type: data.token_type,
+                    timestamp: Date.now()
+                }));
+
+                showSuccess('Авторизация прошла успешно! Перенаправление...');
+                
+                // Перенаправление с задержкой для отображения статуса
+                setTimeout(() => {
+                    window.location.href = oauthConfig.widgetUrl;
+                }, 1500);
+            }
+
+            function handleError(error) {
+                console.error('Ошибка авторизации:', error);
+                showError(`Ошибка авторизации: ${error.message}`);
+            }
+
+            function showSuccess(message) {
+                spinner.style.display = 'none';
+                statusContainer.innerHTML = `
+                    <div class="status success">
+                        <p>${message}</p>
+                    </div>
+                `;
+            }
+
+            function showError(message) {
+                spinner.style.display = 'none';
+                statusContainer.innerHTML = `
+                    <div class="status error">
+                        <p>${message}</p>
+                        <p>Пожалуйста, закройте это окно и попробуйте снова.</p>
+                    </div>
+                `;
+            }
+        });
     </script>
 </body>
 </html>
