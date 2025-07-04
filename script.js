@@ -5,7 +5,7 @@ define(['jquery'], function($) {
     var dealsCache = {};
     
     // Локализация
-    var translations = {
+    /*var translations = {
       ru: {
         monthNames: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
         weekdays: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
@@ -14,7 +14,7 @@ define(['jquery'], function($) {
         dealsForDate: "Заказы на",
         backToCalendar: "← Назад к календарю"
       }
-    };
+    };*/
 
     this.callbacks = {
       render: function() {
@@ -107,7 +107,7 @@ define(['jquery'], function($) {
       var deals = dealsCache[date] || [];
       deals.sort(function(a, b) { return b.id - a.id; });
       
-      if (deals.length === 0) {
+      if (deals.length == 0) {
         $('#deals-container').html('<p>' + translations.ru.noDeals + '</p>');
       } else {
         deals.forEach(function(deal) {
@@ -184,7 +184,7 @@ define(['jquery'], function($) {
     this.getCustomFieldValue = function(deal, fieldId) {
       if (!deal.custom_fields_values) return null;
       var field = deal.custom_fields_values.find(function(f) { 
-        return f.field_id === fieldId; 
+        return f.field_id == fieldId; 
       });
       return field ? field.values[0].value : null;
     };
