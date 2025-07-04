@@ -3,59 +3,35 @@ define(['jquery'], function($) {
     var self = this;
     var currentDate = new Date();
     var dealsCache = {};
-    var refreshInterval;
     
-    // Локализация (оставляем как есть)
+    // Локализация
     var translations = {
       ru: {
         monthNames: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
         weekdays: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
         noDeals: "Нет заказов на эту дату",
-        loading: "Загрузка..."
-      },
-      en: {
-        monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-        weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        noDeals: "No orders for this date",
-        loading: "Loading..."
+        loading: "Загрузка...",
+        dealsForDate: "Заказы на",
+        backToCalendar: "← Назад к календарю"
       }
     };
 
-    // Основные методы
     this.callbacks = {
       render: function() {
+        console.log('render');
         return true;
       },
+
       init: function() {
         if (!window.AmoCRM) {
           console.error('AmoCRM API не загружен');
           return false;
         }
         
-        try {
-          // Инициализация кастомных действий
-          self.initCustomActions();
-          
-          // Подписка на уведомления
-          window.AmoCRM.notifications.subscribe({
-            handler_type: 'user_short_lived',
-            callback: function(data) {
-              if (data.type === 'deal_updated') {
-                self.refreshDealsData();
-              }
-            }
-          });
-          
-          // Остальная инициализация
-          self.setLanguage(self.getLanguageSetting());
-          self.renderCalendar(currentDate);
-          self.refreshDealsData();
-          self.setupRefresh();
-          return true;
-        } catch (e) {
-          console.error('Ошибка инициализации:', e);
-          return false;
-        }
+        self.setLanguage('ru');
+        self.renderCalendar(currentDate);
+        self.refreshDealsData();
+        return true;
       },
 
       bind_actions: function() {
@@ -68,13 +44,6 @@ define(['jquery'], function($) {
             e.stopPropagation();
             var dealId = $(this).data('deal-id');
             window.AmoCRM.opensCard('lead', dealId);
-          })
-          // Новые обработчики для кастомных действий
-          .on('click', '.export-excel', function() {
-            self.exportToExcel($(this).data('date'));
-          })
-          .on('click', '.create-task', function() {
-            self.createTask($(this).data('deal-id'));
           })
           .on('click', '#prev-month', function() {
             currentDate.setMonth(currentDate.getMonth() - 1);
@@ -91,146 +60,12 @@ define(['jquery'], function($) {
           });
         
         return true;
-      },
-
-      onSave: function() {
-        self.setupRefresh();
-        return true;
-      },
-      
-      // Новый метод для расширенных настроек (работает без изменений manifest.json)
-      advancedSettings: function() {
-        var settings = self.get_settings();
-        var $workArea = $('#work-area-' + self.get_settings().widget_code);
-        
-        // Динамически генерируем интерфейс настроек
-        var html = `
-          <div class="advanced-settings">
-            <h3>Дополнительные настройки</h3>
-            <div class="form-group">
-              <label>Частота обновления (минут)</label>
-              <input type="number" name="refresh_rate" 
-                     value="${settings.refresh_rate || 15}" min="1">
-            </div>
-            <div class="form-group">
-              <label>Цвет выделения</label>
-              <input type="color" name="highlight_color" 
-                     value="${settings.highlight_color || '#ff0000'}">
-            </div>
-          </div>
-        `;
-        
-        $workArea.html(html);
-        return true;
       }
     };
 
-    // Новые методы для кастомных действий
-    this.initCustomActions = function() {
-      // Регистрируем действия в amoCRM
-      this.add_action("export_excel", _.bind(this.exportToExcel, this));
-      this.add_action("create_task", _.bind(this.createTask, this));
-    };
-
-    this.exportToExcel = function(date) {
-      var deals = dealsCache[date] || [];
-      console.log('Экспорт сделок на ' + date + ': ' + deals.length + ' шт.');
-      // Здесь должна быть реальная логика экспорта
-      return { status: 'success', count: deals.length };
-    };
-
-    this.createTask = function(dealId) {
-      return window.AmoCRM.createTask({
-        entity_id: dealId,
-        task_type: 1,
-        text: "Связаться по заказу",
-        complete_till: new Date(Date.now() + 86400000) // +1 день
-      });
-    };
-
-    // Модифицируем showDealsForDate для поддержки кастомных действий
-    this.showDealsForDate = function(date) {
-      var dateObj = new Date(date);
-      var formattedDate = dateObj.toLocaleDateString(this.i18n('locale'), {
-        day: 'numeric', month: 'long', year: 'numeric'
-      });
-      
-      $('#selected-date').text(formattedDate);
-      $('#deals-container').empty();
-      
-      var deals = dealsCache[date] || [];
-      deals.sort(function(a, b) { return b.id - a.id; });
-      
-      if (deals.length === 0) {
-        $('#deals-container').html('<p>' + this.i18n('noDeals') + '</p>');
-      } else {
-        deals.forEach(function(deal) {
-          var deliveryRange = self.getCustomFieldValue(deal, 892009);
-          var exactTime = self.getCustomFieldValue(deal, 892003);
-          var address = self.getCustomFieldValue(deal, 887367);
-          
-          var dealHtml = `
-            <div class="deal-item" data-deal-id="${deal.id}">
-              <h3>${deal.name}</h3>
-              <div class="deal-info">
-                <div><strong>ID:</strong> ${deal.id}</div>
-                <div><strong>Бюджет:</strong> ${deal.price || '—'}</div>
-                <div><strong>Диапазон доставки:</strong> ${deliveryRange || '—'}</div>
-                <div><strong>К точному времени:</strong> ${exactTime || '—'}</div>
-                <div><strong>Адрес:</strong> ${address || '—'}</div>
-              </div>
-              <button class="create-task" data-deal-id="${deal.id}">
-                Создать задачу
-              </button>
-            </div>
-          `;
-          
-          $('#deals-container').append(dealHtml);
-        });
-        
-        // Добавляем кнопку экспорта
-        $('#deals-container').prepend(`
-          <button class="export-excel" data-date="${date}">
-            Экспорт в Excel
-          </button>
-        `);
-      }
-      
-      $('#calendar-container').addClass('hidden');
-      $('#deals-list').removeClass('hidden');
-      this.updateIframeSize();
-    };
-
-
-    // Получение языка из настроек
-    this.getLanguageSetting = function() {
-      var settings = this.get_settings();
-      return (settings && settings.language) ? settings.language : 'ru';
-    };
-
-    // Установка языка
-    this.setLanguage = function(lang) {
-      this.currentLanguage = lang in translations ? lang : 'ru';
-    };
-
-    // Получение перевода
-        this.i18n = function(path) {
-      const keys = path.split('.');
-      let result = translations[this.currentLanguage];
-      
-      keys.forEach(key => {
-        result = result ? result[key] : path; // Возвращаем путь, если перевод не найден
-      });
-      
-      return result || path;
-    };
-
-    // Вместо жёстко закодированного текста
-    `<h2>${this.i18n('ui.dealsForDate')} <span id="selected-date"></span></h2>`
-
-    // Кастомные методы
+    // Основные методы
     this.renderCalendar = function(date) {
-      var monthNames = self.i18n('monthNames');
+      var monthNames = translations.ru.monthNames;
       $('#current-month').text(monthNames[date.getMonth()] + ' ' + date.getFullYear());
       
       var calendarHtml = '';
@@ -238,8 +73,7 @@ define(['jquery'], function($) {
       var daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
       
       // Заголовки дней недели
-      var weekdays = self.i18n('weekdays');
-      weekdays.forEach(function(day) {
+      translations.ru.weekdays.forEach(function(day) {
         calendarHtml += '<div class="weekday">' + day + '</div>';
       });
       
@@ -261,7 +95,7 @@ define(['jquery'], function($) {
 
     this.showDealsForDate = function(date) {
       var dateObj = new Date(date);
-      var formattedDate = dateObj.toLocaleDateString(self.i18n('locale'), {
+      var formattedDate = dateObj.toLocaleDateString('ru', {
         day: 'numeric',
         month: 'long',
         year: 'numeric'
@@ -274,7 +108,7 @@ define(['jquery'], function($) {
       deals.sort(function(a, b) { return b.id - a.id; });
       
       if (deals.length === 0) {
-        $('#deals-container').html('<p>' + self.i18n('noDeals') + '</p>');
+        $('#deals-container').html('<p>' + translations.ru.noDeals + '</p>');
       } else {
         deals.forEach(function(deal) {
           var deliveryRange = self.getCustomFieldValue(deal, 892009);
@@ -301,18 +135,6 @@ define(['jquery'], function($) {
       self.updateIframeSize();
     };
 
-    this.setupRefresh = function() {
-      clearInterval(refreshInterval);
-      var settings = self.get_settings();
-      var refreshRate = (settings && settings.refresh_rate) ? parseInt(settings.refresh_rate) : 15;
-      
-      if (refreshRate > 0) {
-        refreshInterval = setInterval(function() {
-          self.refreshDealsData();
-        }, refreshRate * 60 * 1000);
-      }
-    };
-
     this.refreshDealsData = function() {
       var date = new Date();
       var year = date.getFullYear();
@@ -331,14 +153,13 @@ define(['jquery'], function($) {
     };
 
     this.fetchDealsByDate = function(date) {
-      return AmoApi.getLeads({
+      return window.AmoCRM.API.get('/api/v4/leads', {
         filter: {
-          custom_fields: {885453: date}
+          'custom_fields_values[885453]': date
         },
         limit: 250
-      }).then(function(deals) {
-        dealsCache[date] = deals;
-        return deals;
+      }).then(function(response) {
+        return response._embedded.leads || [];
       }).catch(function(error) {
         console.error('Ошибка загрузки сделок:', error);
         return [];
@@ -361,6 +182,7 @@ define(['jquery'], function($) {
     };
 
     this.getCustomFieldValue = function(deal, fieldId) {
+      if (!deal.custom_fields_values) return null;
       var field = deal.custom_fields_values.find(function(f) { 
         return f.field_id === fieldId; 
       });
