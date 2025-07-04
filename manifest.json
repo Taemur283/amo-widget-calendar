@@ -13,7 +13,13 @@
       "email": "info@spacebakery.ru"
     }
   },
-  "locations": ["lcard-1", "ccard-1", "settings"],
+  "locations": 
+  ["ccard-1",
+    "clist-0",
+    "lcard-1",
+    "llist-0",
+    "settings"
+  ],
   "tour": {
     "is_tour": true,
     "tour_images": {
