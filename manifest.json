@@ -7,6 +7,9 @@
     "interface_version": 2,
     "init_once": true,
     "locale": ["ru", "en"],
+    "i18n": {
+      "path": "i18n"
+    },
     "installation": true,
     "support": {
       "link": "https://spacebakery.ru/#about_us",
@@ -35,17 +38,26 @@
     "api_key": {
       "name": "widget.api_key",
       "type": "text",
-      "required": true
+      "required": true,
+      "placeholder": "4xEV2r7E8xixFw1ufgfNj86MkKGWj57RD"
     },
     "account": {
       "name": "widget.account",
       "type": "text",
-      "required": true
+      "required": true,
+      "placeholder": "spacebakery1"
     },
     "language": {
       "name": "widget.language",
+      "type": "text",  
+      "required": true,
+      "placeholder": "ru или en"  
+    },
+    "order_date_field": {
+      "name": "ui.dealId",
       "type": "text",
-      "required": true
+      "required": true,
+      "placeholder": "885453"
     }
   }
 }
