@@ -23,36 +23,9 @@ define(['jquery'], function($) {
 
     // Основные методы
     this.callbacks = {
-      // Добавляем метод render (должен быть ПЕРВЫМ в callbacks)
       render: function() {
-        // Создаем базовую структуру виджета
-        $('#app').html(`
-          <div class="widget-container">
-            <div class="widget-header">
-              <h1 class="widget-title">${self.i18n('widget.title')}</h1>
-            </div>
-            <div id="loading" class="loading">
-              <div class="spinner"></div>
-              <p>${self.i18n('loading')}</p>
-            </div>
-            <div id="calendar-container">
-              <div class="calendar-nav">
-                <button id="prev-month">‹</button>
-                <h2 id="current-month"></h2>
-                <button id="next-month">›</button>
-              </div>
-              <div id="calendar" class="calendar"></div>
-            </div>
-            <div id="deals-list" class="hidden">
-              <h2>${self.i18n('dealsForDate')} <span id="selected-date"></span></h2>
-              <div id="deals-container"></div>
-              <button id="back-to-calendar" class="back-button">${self.i18n('backToCalendar')}</button>
-            </div>
-          </div>
-        `);
-        return true; // Обязательно возвращаем true
+        return true;
       },
-
       init: function() {
         if (!window.AmoCRM) {
           console.error('AmoCRM API не загружен');
